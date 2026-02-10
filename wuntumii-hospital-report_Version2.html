@@ -59,6 +59,8 @@
     }
     .btn-primary { background: #2563eb; }
     .btn-primary:hover { background: #1d4ed8; }
+    /* accessibility-fix: issue-3 - Buttons need focus styles */
+    /* accessibility-fix: issue-7 - Form inputs need focus styles */
     .btn-secondary { background: #64748b; }
     .btn-ghost { background: #e2e8f0; color: #0f172a; }
     .controls { gap: 8px; margin-top: 14px; display:flex; flex-wrap:wrap; }
@@ -93,12 +95,16 @@
 </head>
 <body>
 
+<!-- accessibility-fix: issue-6 - Missing skip link for keyboard navigation -->
+<!-- accessibility-fix: issue-4 - Main content should use <main> landmark -->
 <div class="container">
   <h1>WunTumii Monthly Hospital Report Generator</h1>
   <div class="subtitle">AI‑Assisted Administrative Reporting Tool for Ghana Government Hospitals</div>
 
+  <!-- accessibility-fix: issue-2 - Form labels need for attribute to associate with inputs -->
   <label>Facility Name</label>
   <input id="facility" placeholder="e.g. Dunkwa‑On‑Offin Government Hospital" />
+  <!-- /accessibility-fix -->
 
   <label>Reporting Period</label>
   <input id="period" placeholder="e.g. January 2026" />
@@ -124,6 +130,7 @@
   <label>Recommendations</label>
   <textarea id="recommendations" rows="3" placeholder="e.g. Posting of additional staff and timely drug supply."></textarea>
 
+  <!-- accessibility-fix: issue-5 - Buttons could benefit from aria-labels -->
   <div class="controls">
     <button class="btn btn-primary" id="btn-generate">Generate AI Prompt</button>
     <button class="btn btn-secondary" id="btn-copy">Copy Prompt</button>
@@ -131,6 +138,7 @@
     <button class="btn btn-primary" id="btn-pdf">Export Report as PDF</button>
     <button class="btn btn-ghost" id="btn-clear">Clear</button>
   </div>
+  <!-- /accessibility-fix -->
 
   <div class="output" id="output" aria-live="polite">Click "Generate AI Prompt" to compose the draft prompt for an AI or to preview a printable report below.</div>
 
