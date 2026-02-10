@@ -59,8 +59,6 @@
     }
     .btn-primary { background: #2563eb; }
     .btn-primary:hover { background: #1d4ed8; }
-    /* accessibility-fix: issue-3 - Buttons need focus styles */
-    /* accessibility-fix: issue-7 - Form inputs need focus styles */
     .btn-secondary { background: #64748b; }
     .btn-ghost { background: #e2e8f0; color: #0f172a; }
     .controls { gap: 8px; margin-top: 14px; display:flex; flex-wrap:wrap; }
@@ -95,16 +93,12 @@
 </head>
 <body>
 
-<!-- accessibility-fix: issue-6 - Missing skip link for keyboard navigation -->
-<!-- accessibility-fix: issue-4 - Main content should use <main> landmark -->
 <div class="container">
   <h1>WunTumii Monthly Hospital Report Generator</h1>
   <div class="subtitle">AI‑Assisted Administrative Reporting Tool for Ghana Government Hospitals</div>
 
-  <!-- accessibility-fix: issue-2 - Form labels need for attribute to associate with inputs -->
   <label>Facility Name</label>
   <input id="facility" placeholder="e.g. Dunkwa‑On‑Offin Government Hospital" />
-  <!-- /accessibility-fix -->
 
   <label>Reporting Period</label>
   <input id="period" placeholder="e.g. January 2026" />
@@ -130,7 +124,6 @@
   <label>Recommendations</label>
   <textarea id="recommendations" rows="3" placeholder="e.g. Posting of additional staff and timely drug supply."></textarea>
 
-  <!-- accessibility-fix: issue-5 - Buttons could benefit from aria-labels -->
   <div class="controls">
     <button class="btn btn-primary" id="btn-generate">Generate AI Prompt</button>
     <button class="btn btn-secondary" id="btn-copy">Copy Prompt</button>
@@ -138,7 +131,6 @@
     <button class="btn btn-primary" id="btn-pdf">Export Report as PDF</button>
     <button class="btn btn-ghost" id="btn-clear">Clear</button>
   </div>
-  <!-- /accessibility-fix -->
 
   <div class="output" id="output" aria-live="polite">Click "Generate AI Prompt" to compose the draft prompt for an AI or to preview a printable report below.</div>
 
@@ -157,7 +149,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
 <script>
-  // Helper: safely read trimmed value
   function val(id) { return (document.getElementById(id).value || '').trim(); }
 
   function buildPrompt() {
@@ -183,7 +174,6 @@
     const { prompt, facility, period } = buildPrompt();
     document.getElementById('output').textContent = prompt;
 
-    // Build a printable preview (simple formatted version)
     document.getElementById('report-title').textContent = `${facility || 'WunTumii Hospital'} — Monthly Report`;
     document.getElementById('report-meta').textContent = period ? `Reporting Period: ${period}` : `Generated: ${new Date().toLocaleDateString()}`;
     const body = `
@@ -208,11 +198,9 @@ ${val('recommendations') || '---'}
 
 Conclusion
 `.trim();
-    // render with simple line breaks turned into paragraphs
     document.getElementById('report-body').innerText = body;
   }
 
-  // Copy prompt to clipboard
   async function copyPrompt() {
     const { prompt } = buildPrompt();
     try {
@@ -223,7 +211,6 @@ Conclusion
     }
   }
 
-  // Download prompt as .txt
   function downloadPromptTxt() {
     const { prompt } = buildPrompt();
     const filename = `wuntumii-report-prompt-${(val('period') || new Date().toISOString().slice(0,7))}.txt`.replace(/\s+/g,'-');
@@ -239,14 +226,11 @@ Conclusion
     flashOutput(`Downloaded ${filename}`);
   }
 
-  // Generate a simple PDF of the printable preview
   function exportPdf() {
-    // Prepare a minimal printable element clone to avoid UI elements
     const el = document.getElementById('report-preview').cloneNode(true);
     el.style.maxWidth = '800px';
     el.style.padding = '20px';
     el.style.boxSizing = 'border-box';
-    // html2pdf options
     const opt = {
       margin:       0.4,
       filename:     `wuntumii-monthly-report-${(val('period') || new Date().toISOString().slice(0,7))}.pdf`,
@@ -267,13 +251,11 @@ Conclusion
     document.getElementById('report-body').textContent = '';
   }
 
-  // Small helper for user feedback
   function flashOutput(msg, isError=false) {
     const out = document.getElementById('output');
     out.textContent = msg;
     out.style.color = isError ? '#b91c1c' : '#0f172a';
     setTimeout(() => {
-      // if no other text was generated, restore placeholder
       if (!out.textContent || out.textContent === msg) {
         out.textContent = 'Click "Generate AI Prompt" to compose the draft prompt for an AI or to preview a printable report below.';
         out.style.color = '';
@@ -281,18 +263,15 @@ Conclusion
     }, 3500);
   }
 
-  // Event bindings
   document.getElementById('btn-generate').addEventListener('click', renderPromptAndPreview);
   document.getElementById('btn-copy').addEventListener('click', copyPrompt);
   document.getElementById('btn-download').addEventListener('click', downloadPromptTxt);
   document.getElementById('btn-pdf').addEventListener('click', () => {
-    // ensure preview is up-to-date
     renderPromptAndPreview();
     exportPdf();
   });
   document.getElementById('btn-clear').addEventListener('click', clearAll);
 
-  // Accessibility: allow CTRL+Enter to generate
   document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
